@@ -1,0 +1,11 @@
+.myBtn{
+	display: flex;
+	justify-content: center;
+	padding: 5px 10px;
+	color: teal;
+	border-radius: 6px;
+	border: 1px solid teal;
+	background: transparent;
+	font-size: 14px;
+	cursor: pointer;
+}
