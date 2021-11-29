@@ -1,30 +1,28 @@
-import React, {useState, useMemo } from "react";
+import React, {useEffect, useState } from "react";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
 import './App.css';
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/modal/MyModal";
 import MyButton from "./components/UI/button/MyButton";
+import { usePosts } from "./hooks/usePosts";
+import PostServices from "./API/PostServices";
+import { useFetchPosts } from "./hooks/useFetchPosts";
+import MyLoader from "./components/UI/loader/MyLoader";
 
 function App() {
-  const [posts, setPosts] = useState([
-    {id: 1, title: 'yu' , body: 'i'},
-    {id: 2, title: 'jaas2' , body: 'yt'},
-    {id: 3, title: 'a' , body: 'q'},
-  ])
+  const [posts, setPosts] = useState([])
   const [filter, setFilter] = useState({sort: '', query: ''});
   const [modalActive, setModalActive] = useState(false);
+  const searchAndSortPosts = usePosts(posts, filter.sort, filter.query);
+  const [fetchPosts, isPostsLoading, postError] = useFetchPosts( async () => {
+    const posts = await PostServices.getAll();
+    setPosts(posts);
+  })
 
-  const sortedPosts = useMemo(() =>{
-    if(filter.sort){
-      return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]));
-    }
-    return posts;
-  },[filter.sort, posts])
-
-  const searchAndSortPosts = useMemo(() => {
-    return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
-  }, [sortedPosts, filter.query])
+  useEffect(() =>{
+    fetchPosts();
+  },[])
 
   const createPost = (post) => {
     setPosts([...posts, {...post}]);
@@ -43,10 +41,18 @@ function App() {
       </MyModal>
       <hr style={{margin: '10px 0'}} />
       <PostFilter filter={filter} setFilter={setFilter}/>
+      {postError &&
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+          <h1>{postError}</h1>
+        </div>
+      }
       {
-        searchAndSortPosts.length
-          ? <PostList remove={removePost} title="List posts" posts={searchAndSortPosts}/>
-          : <h1 style={{textAlign: 'center'}}>Empty posts</h1>
+        isPostsLoading
+          ?
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+              <MyLoader/>
+            </div>
+          : <PostList remove={removePost} title="List posts" posts={searchAndSortPosts}/>
       }
     </div>
   );

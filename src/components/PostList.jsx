@@ -3,6 +3,11 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import PostItem from "./PostItem";
 
 const PostList = ({posts, title, remove}) =>{
+	if(!posts.length){
+		return(
+			<h1 style={{textAlign: 'center'}}>Empty posts</h1>
+		)
+	}
 
 	return (
 		<div>
@@ -15,7 +20,7 @@ const PostList = ({posts, title, remove}) =>{
 							timeout={500}
 							classNames="post"
 						>
-							<PostItem post={post}  number={i + 1} remove={remove}/>
+							<PostItem post={post}  number={post.id} remove={remove}/>
 						</CSSTransition>
 					)
 				}
