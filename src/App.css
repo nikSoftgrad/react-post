@@ -37,3 +37,28 @@
   transform: translateX(-350px);
   transition: all 500ms;
 }
+
+.pagination__wrapper{
+	display: flex;
+	align-items: center;
+}
+
+.pagination{
+	width: 50px;
+	height: 50px;
+	border: 1px solid teal;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: teal;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.pagination.current{
+	border-color: burlywood;
+	border-width: 2px;
+	color:burlywood;
+	font-weight: bold;
+}

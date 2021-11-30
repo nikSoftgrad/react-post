@@ -9,20 +9,29 @@ import { usePosts } from "./hooks/usePosts";
 import PostServices from "./API/PostServices";
 import { useFetchPosts } from "./hooks/useFetchPosts";
 import MyLoader from "./components/UI/loader/MyLoader";
+import { getPagination, getTotalPages } from "./utils/PostServices";
 
 function App() {
   const [posts, setPosts] = useState([])
   const [filter, setFilter] = useState({sort: '', query: ''});
   const [modalActive, setModalActive] = useState(false);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
   const searchAndSortPosts = usePosts(posts, filter.sort, filter.query);
+
   const [fetchPosts, isPostsLoading, postError] = useFetchPosts( async () => {
-    const posts = await PostServices.getAll();
-    setPosts(posts);
+    const response = await PostServices.getAll(limit, page);
+    const totalPosts = response.headers['x-total-count']
+    setPosts(response.data);
+    setTotalPages(getTotalPages(totalPosts, limit))
   })
+
+  const paginationPosts = getPagination(totalPages);
 
   useEffect(() =>{
     fetchPosts();
-  },[])
+  },[page])
 
   const createPost = (post) => {
     setPosts([...posts, {...post}]);
@@ -54,6 +63,17 @@ function App() {
             </div>
           : <PostList remove={removePost} title="List posts" posts={searchAndSortPosts}/>
       }
+      <div className="pagination__wrapper">
+        {
+          paginationPosts.map(p =>
+            <span
+              key={p}
+              className={p === page ? 'pagination current' : 'pagination'}
+              onClick={() => setPage(p)}
+            >{p}</span>
+          )
+        }
+      </div>
     </div>
   );
 }
