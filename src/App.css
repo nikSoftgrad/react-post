@@ -6,7 +6,8 @@
 
 #root{
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
 }
 
 .App{
@@ -38,6 +39,10 @@
   transition: all 500ms;
 }
 
+.post__btns{
+	display: flex;
+}
+
 .pagination__wrapper{
 	display: flex;
 	align-items: center;
@@ -61,4 +66,17 @@
 	border-width: 2px;
 	color:burlywood;
 	font-weight: bold;
+}
+
+.navbar{
+	width: 100%;
+	height: 50px;
+	padding: 10px 15px;
+	display: flex;
+	justify-content: center;
+	background: rgb(185, 182, 182);
+}
+
+.navbar__links{
+	margin-left: auto;
 }
